@@ -9,7 +9,6 @@ GPIO.setmode(GPIO.BCM)
 # Define GPIO to use on Pi
 GPIO_TRIGECHO = 15
 break_pin = 27
-led_pin = 17
 
 current_action = 'pulse'
 sequence_time = 10000
@@ -19,8 +18,6 @@ print("Ultrasonic Measurement")
 # Set pins as output and input
 GPIO.setup(GPIO_TRIGECHO,GPIO.OUT)  # Initial state as output
 GPIO.setup(break_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(led_pin, GPIO.OUT)
-GPIO.output(led_pin, False)
 
 # Set trigger to False (Low)
 GPIO.output(GPIO_TRIGECHO, False)
@@ -70,7 +67,7 @@ try:
         #distance = measure()
         #print("  Distance : %.1f cm" % distance)
         sense()
-        time.sleep(1) 
+        time.sleep(1)
 
 except KeyboardInterrupt:
     print("Stop")
