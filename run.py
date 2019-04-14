@@ -70,7 +70,7 @@ try:
         #distance = measure()
         #print("  Distance : %.1f cm" % distance)
         sense()
-        time.sleep(1)
+        time.sleep(1) 
 
 except KeyboardInterrupt:
     print("Stop")
