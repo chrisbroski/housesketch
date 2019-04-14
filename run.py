@@ -11,6 +11,9 @@ GPIO_TRIGECHO = 15
 break_pin = 27
 led_pin = 17
 
+current_action = 'pulse'
+sequence_time = 10000
+
 print("Ultrasonic Measurement")
 
 # Set pins as output and input
@@ -39,7 +42,7 @@ def measure():
   # Wait for end of echo response
     while GPIO.input(GPIO_TRIGECHO)==1:
         stop = time.time()
-  
+
     GPIO.setup(GPIO_TRIGECHO, GPIO.OUT)
     GPIO.output(GPIO_TRIGECHO, False)
 
@@ -49,14 +52,24 @@ def measure():
     return distance
 
 def take_action(act):
+    current_action = act
     print(act)
+
+def sense():
+    if sequence_time < 10000:
+        return
+
+    distance = measure()
+    print("  Distance : %.1f cm" % distance)
+
 
 try:
 
     while True:
 
-        distance = measure()
-        print("  Distance : %.1f cm" % distance)
+        #distance = measure()
+        #print("  Distance : %.1f cm" % distance)
+        sense()
         time.sleep(1)
 
 except KeyboardInterrupt:
