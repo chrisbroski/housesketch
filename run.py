@@ -2,6 +2,12 @@
 import time
 import RPi.GPIO as GPIO
 
+try:
+    GPIO.cleanup()
+except:
+    print('nothing to clean')
+    
+GPIO.setwarnings(False)
 # Use BCM GPIO references
 # instead of physical pin numbers
 GPIO.setmode(GPIO.BCM)
@@ -12,7 +18,7 @@ break_pin = 27
 
 current_action = 'pulse'
 sequence_time = 10000
-dist = 200
+distance = 200
 
 print("Ultrasonic Measurement")
 
@@ -60,6 +66,7 @@ def sense():
         take_action('alarm sequence')
         return
 
+    global distance
     distance = (measure() + distance) / 2
     # print("  Distance : %.1f cm" % distance)
 
