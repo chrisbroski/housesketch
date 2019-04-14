@@ -45,7 +45,6 @@ def measure():
 
     elapsed = stop-start
     distance = (elapsed * 34300)/2.0
-    time.sleep(0.1)
     return distance
 
 def take_action(act):
@@ -56,9 +55,22 @@ def sense():
     if sequence_time < 10000:
         return
 
-    distance = measure()
-    print("  Distance : %.1f cm" % distance)
+    if GPIO.input(break_pin):
+        take_action('alarm sequence')
+        return
 
+    distance = measure()
+    # print("  Distance : %.1f cm" % distance)
+
+    if distance <= 61:
+        take_action('shh')
+        return
+
+    if distance <= 183:
+        take_action('music and sillouettes')
+        return
+
+    take_action('pulse')
 
 try:
 
@@ -67,7 +79,7 @@ try:
         #distance = measure()
         #print("  Distance : %.1f cm" % distance)
         sense()
-        time.sleep(1)
+        time.sleep(0.1)
 
 except KeyboardInterrupt:
     print("Stop")
