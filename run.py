@@ -55,7 +55,7 @@ def sense():
     if sequence_time < 10000:
         return
 
-    if GPIO.input(break_pin):
+    if not GPIO.input(break_pin):
         take_action('alarm sequence')
         return
 
