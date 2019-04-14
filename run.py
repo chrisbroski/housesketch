@@ -12,6 +12,7 @@ break_pin = 27
 
 current_action = 'pulse'
 sequence_time = 10000
+dist = 200
 
 print("Ultrasonic Measurement")
 
@@ -59,7 +60,7 @@ def sense():
         take_action('alarm sequence')
         return
 
-    distance = measure()
+    distance = (measure() + distance) / 2
     # print("  Distance : %.1f cm" % distance)
 
     if distance <= 61:
