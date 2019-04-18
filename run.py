@@ -1,11 +1,15 @@
 # coding: utf-8
-import time
+#I added imports from other sketches using Popen
 import RPi.GPIO as GPIO
+import time, sys, os
+import subprocess
+from subprocess import Popen
 
-try:
-    GPIO.cleanup()
-except:
-    print('nothing to clean')
+# clean-up was getting an error message so I commented it out
+#try:
+ #   GPIO.cleanup()
+#except:
+ #   print('nothing to clean')
     
 GPIO.setwarnings(False)
 # Use BCM GPIO references
@@ -72,6 +76,10 @@ def sense():
 
     if distance <= 61:
         take_action('shh')
+        subprocess.Popen('omxplayer home/pi/project/housesketch/siloMaleV3.mov', shell=True)
+        #plays video but freezes the screen, cntrl-c doesn't work 
+        #subprocess.call('pkill -9 omxplayer', shell=true)
+        #this kills it before it plays video, prints "kill"
         return
 
     if distance <= 183:
