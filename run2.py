@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time, sys, os
+import time
 import subprocess
 from subprocess import Popen
 from pathlib import Path
@@ -7,33 +8,40 @@ from time import sleep
 
 actions = {
     'pulse': {
-        'duration': 3
+        'video': 'Pulse.mov',
+        'duration': 20
     },
     'shh': {
         'video': 'siloMaleV3.mov',
-        'duration': 5
+        'duration': 3
     },
-    'alarm sequence': {
-        'duration': 8
+    'alarm': {
+        'video': 'SirenV1.mov',
+        'duration': 10
     },
     'music and sillouettes': {
-        'duration': 5
+        'video': 'PartyV1.mov',
+        'duration': 8
     }
 }
 
+GPIO.setwarnings(False)
+
 # clean-up was getting an error message so I commented it out
 #try:
- #   GPIO.cleanup()
+#    GPIO.cleanup()
 #except:
- #   print('nothing to clean')
+#    print('nothing to clean')
+ 
+current_action = ''
+new_action = ''
+new_action_count = 0
+action_time = time.time()
 
-print("Start house sketch")
-
-# Set pinsGPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO_TRIGECHO = 15
 break_pin = 27
-GPIO.setup(GPIO_TRIGECHO,GPIO.OUT)  # Initial state as output
+GPIO.setup(GPIO_TRIGECHO,GPIO.OUT)
 GPIO.setup(break_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.output(GPIO_TRIGECHO, False)
 
@@ -45,12 +53,12 @@ def measure():
     GPIO.output(GPIO_TRIGECHO, False)
     start = time.time()
 
-  # set line to input to check for start of echo response
+    # set line to input to check for start of echo response
     GPIO.setup(GPIO_TRIGECHO, GPIO.IN)
     while GPIO.input(GPIO_TRIGECHO)==0:
         start = time.time()
 
-  # Wait for end of echo response
+    # Wait for end of echo response
     while GPIO.input(GPIO_TRIGECHO)==1:
         stop = time.time()
 
@@ -63,26 +71,59 @@ def measure():
 
 
 def take_action(act):
-    print(act)
-
-    if 'video' in actions[act]:
-        subprocess.Popen('omxplayer ' + str(Path(actions[act]['video'])), shell=True)
+    global current_action
+    global new_action
+    global new_action_count
+    global action_time
+    start = False
     
-    if 'duration' in actions[act]:
-        sleep(actions[act]['duration'])
+    if act != current_action:
+        if act != new_action:
+            new_action = act
+            new_action_count = 0
+        else:
+            new_action_count += 1
+
+    if current_action == '':
+        current_action = act
+        start = True
+
+    if current_action == 'alarm' and time.time() < action_time + actions[current_action]['duration']:
+        return
+
+    if new_action_count > 3:
+        current_action = new_action
+        new_action_count = 0
+        start = True
+    
+    if act == 'alarm' and current_action != 'alarm':
+        current_action = 'alarm'
+        new_action_count = 0
+        start = True
+    
+    if start:
+        print('starting', current_action)
+        action_time = time.time()
+        #subprocess.Popen('omxplayer ' + str(Path(actions[current_action]['video'])), shell=True)
+    
+    if time.time() > action_time + actions[current_action]['duration']:
+        #subprocess.Popen('omxplayer ' + str(Path(actions[current_action]['video'])), shell=True)
+        if current_action == 'alarm':
+            current_action = act
+        print('re-starting', current_action)
+        action_time = time.time()
 
 
 def sense():
     if not GPIO.input(break_pin):
-        take_action('alarm sequence')
+        take_action('alarm')
         return
 
     global distance
-    distance = (measure() + distance) / 2
+    distance = measure()
 
     if distance <= 61:
         take_action('shh')
-        #subprocess.call('pkill -9 omxplayer', shell=true)
         return
 
     if distance <= 183:
