@@ -14,8 +14,6 @@ function createWindow () {
         fullscreen: true,
         x: 0,
         y: 0,
-        width: area.width,
-        height: area.height,
         webPreferences: {
             nodeIntegration: true
         }
