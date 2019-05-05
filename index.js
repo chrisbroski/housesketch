@@ -10,8 +10,12 @@ let mainWindow;
 function createWindow () {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        frame: false,
+        fullscreen: true,
+        x: 0,
+        y: 0,
+        width: area.width,
+        height: area.height,
         webPreferences: {
             nodeIntegration: true
         }

@@ -57,9 +57,15 @@ function preload(key, path) {
 window.onload = function () {
     //preload('pulse', 'Pulse.mov');
     //preload('shh', 'siloMaleV3.mov');
-    play('Pulse.mov');
-    window.setTimeout(function () {
-        play('siloMaleV3.mov');
-    }, 3000);
+    // play('Pulse.mov');
+    // window.setTimeout(function () {
+    //     play('siloMaleV3.mov');
+    // }, 3000);
+    document.getElementById('videoPlayer').onclick = function () {
+        play('Pulse.mov');
+        window.setTimeout(function () {
+            play('siloMaleV3.mov');
+        }, 3000);
+    }
 };
 </script>
