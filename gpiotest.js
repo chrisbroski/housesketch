@@ -18,11 +18,15 @@
 var Gpio = require('pigpio').Gpio;//,
     // fs = require('fs');
 
+console.log('starting test');
+
 const button = new Gpio(27, {
     mode: Gpio.INPUT,
-    pullUpDown: Gpio.PUD_DOWN,
+    pullUpDown: Gpio.PUD_UP,
     edge: Gpio.EITHER_EDGE
 });
+
+console.log('setting break sensor to 27');
 
 button.on('interrupt', (level) => {
     //led.digitalWrite(level);
