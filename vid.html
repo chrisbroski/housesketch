@@ -13,9 +13,12 @@ html, body {
     width: 100%; height: 100%;
 }
 
-#vid {
+/*#vid {
     width: 100%;
     height: 100%;
+}*/
+#echo {
+    color: #fff;
 }
 </style>
 
@@ -24,49 +27,15 @@ html, body {
 <article>
 
 <video id="videoPlayer" preload src="Pulse.mov" type="video/mp4"></video>
-
+<p id="echo"></p>
 </article>
 
 <script>
-// var vids = {};
+const {ipcRenderer} = require('electron');
 
-function play(vidname) {
-    document.getElementById('videoPlayer').setAttribute('src', vidname);
-    document.getElementById('videoPlayer').play();
-}
-
-function preload(key, path) {
-    var req = new XMLHttpRequest();
-    req.open('GET', path, true);
-    req.responseType = 'blob';
-
-    req.onload = function() {
-       if (this.status === 200) {
-          var videoBlob = this.response;
-          var vid = URL.createObjectURL(videoBlob); // IE10+
-          // Video is now downloaded
-          // and we can set it as source on the video element
-          //video.src = vid;
-          vids[key] = vid;
-       }
-    }
-    req.onerror = function() {
-       // Error
-    }
-}
-
-window.onload = function () {
-    //preload('pulse', 'Pulse.mov');
-    //preload('shh', 'siloMaleV3.mov');
-    // play('Pulse.mov');
-    // window.setTimeout(function () {
-    //     play('siloMaleV3.mov');
-    // }, 3000);
-    //document.getElementById('videoPlayer').onclick = function () {
-        play('Pulse.mov');
-        window.setTimeout(function () {
-            play('siloMaleV3.webm');
-        }, 3000);
-    //}
-};
+ipcRenderer.on('vid', (event, data) => {
+    document.getElementById('echo').textContent = data;
+    // document.getElementById('videoPlayer').setAttribute('src', data);
+    // document.getElementById('videoPlayer').play();
+});
 </script>

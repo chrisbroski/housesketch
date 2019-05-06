@@ -3,6 +3,28 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron');
 
+var Gpio;
+try {
+    Gpio = require('pigpio').Gpio;
+} catch(e) {}
+
+// console.log('starting test');
+
+if (Gpio) {
+    const button = new Gpio(27, {
+        mode: Gpio.INPUT,
+        pullUpDown: Gpio.PUD_UP,
+        edge: Gpio.EITHER_EDGE
+    });
+
+    console.log('setting break sensor to 27');
+
+    button.on('interrupt', (level) => {
+        //led.digitalWrite(level);
+        console.log('break');
+        mainWindow.webContents.send('vid', 'alarm.mov');
+    });
+}
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -22,6 +44,10 @@ function createWindow () {
     // and load the index.html of the app.
     mainWindow.loadFile('vid.html');
 
+    setTimeout(function () {
+        mainWindow.webContents.send('vid', 'siloMaleV3.mov');
+    }, 3000);
+
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
 
@@ -31,6 +57,14 @@ function createWindow () {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         mainWindow = null;
+    });
+
+    // mainWindow.on('load', () => {
+    mainWindow.webContents.once('dom-ready', () => {
+        mainWindow.webContents.send('vid', 'Pulse.mov');
+    //     // mainWindow.show();
+    //     mainWindow.document.getElementById('videoPlayer').setAttribute('src', 'Pulse.mov');
+    //     mainWindow.document.getElementById('videoPlayer').play();
     });
 }
 
